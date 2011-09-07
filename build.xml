@@ -1,0 +1,164 @@
+<?xml version="1.0"?>
+<project name="jameson" default="usage" basedir=".">
+
+    <description>ActionScript 3 JSON Object Mapper</description>
+    
+    <property file="user.properties" />
+	<property file="build.properties" />
+	
+	<!-- Add the ant-contrib tasks -->
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${res.dir}/ant/ant-contrib.jar" />
+    
+    <!-- Set up FlexUnit Ant tasks -->
+    <taskdef resource="flexUnitTasks.tasks" classpath="${res.dir}/ant/flexUnitTasks.jar" />
+	
+    <target name="usage">
+        <echo message=""/>
+        <echo message="${project.name.full}"/>
+        <echo message="-----------------------------------"/>
+        <echo message=""/>
+        <echo message="Available targets:"/>
+        <echo message=""/>
+        <echo message="test     	     --&gt; Build Nobien ActionScript 3 Toolkit SWC and run unit tests"/>
+        <echo message="build	         --&gt; Build Nobien ActionScript 3 Toolkit  SWC"/>
+        <echo message="clean             --&gt; Remove all folders created by build script"/>
+        <echo message="init              --&gt; Create build folders"/>
+        <echo message=""/>
+    </target>
+    
+    <target name="init" depends="clean">
+        <echo>[init] Creating directories: bin, report</echo>
+            <mkdir dir="${bin.dir}"/>
+            <mkdir dir="${report.dir}"/>
+        <echo>[init] Directories created: bin, report</echo>
+    </target>
+    
+    <target name="clean">
+        <echo>[clean] Removing directories: bin, report, dist</echo>
+        <delete includeemptydirs="true" failonerror="false">
+            <fileset dir="${docs.dir}" defaultexcludes="false">
+                <include name="**/*"/>
+            </fileset>
+            <fileset dir="${report.dir}" defaultexcludes="false">
+                <include name="**/*"/>
+            </fileset>
+            <fileset dir="${dist.dir}" defaultexcludes="false">
+                <include name="**/*"/>
+            </fileset>
+            <fileset dir="${bin.dir}" defaultexcludes="false">
+                <include name="**/*"/>
+            </fileset>
+        </delete>
+        <echo>[clean] Directories removed: bin, report, dist</echo>
+    </target>
+
+    <target name="build" depends="test">
+        <echo>[build] Compiling SWC</echo>
+        <echo>[build] Using Flex SDK at: ${FLEX_HOME}</echo>
+        <java jar="${FLEX_HOME}/lib/compc.jar" dir="${FLEX_HOME}/frameworks" fork="true" failonerror="true">
+            <arg value="-output=${bin.dir}/${project.name.versioned}.swc"/>
+            <arg value="-include-sources=${src.dir}" />
+            <arg value="-incremental=true"/>
+        	<arg value="-keep-as3-metadata+=JsonProperty"/>
+        	<arg value="-external-library-path+=${res.dir}/lib"/>
+            <arg value="-static-link-runtime-shared-libraries=true"/>
+            <arg value="-verbose-stacktraces=true"/>
+        	<arg value="-include-sources=${src.dir}"/>
+            <arg value="-headless-server=true"/>
+        	<arg value="-debug=false"/>
+        </java>
+        <echo>[build] Release SWC ${project.name.versioned}.swc created successfully</echo>
+    </target>
+
+    <target name="docs" depends="test">
+        <echo>[docs] Generating ASDoc documentation </echo>
+        <tstamp><format property="year" pattern="yyyy" /></tstamp>
+        <tstamp>
+            <format property="docgen.time" pattern="MM/dd/yyyy hh:mm aa" unit="hour"/>
+        </tstamp>
+        <java jar="${FLEX_HOME}/lib/asdoc.jar" dir="${FLEX_HOME}/frameworks" fork="true" failonerror="true">
+            <arg value="-output=${docs.dir}" />
+            <arg value="-doc-sources=${src.dir}" />
+            <arg value="-source-path=${src.dir}" />
+            <arg value="-main-title=${project.name.full} ${project.version}" />
+            <arg value="-window-title=${project.name.full} ${project.version}" />
+            <arg value="-footer=Copyright © ${year} Nobien" />
+        </java>
+        <echo>[docs] ASDoc documentation generated successfully.</echo>
+    </target>
+    
+    <target name="test" depends="init">
+    	<echo>[test] Compiling unit tests</echo>
+        <java jar="${FLEX_HOME}/lib/mxmlc.jar" dir="${FLEX_HOME}/frameworks" maxmemory="512m" fork="true" failonerror="true">
+            <arg value="${test.target}"/>
+            <arg value="-output=${test.output}"/>
+            <arg value="-source-path=${test.dir}"/>
+            <arg value="-source-path=${src.dir}"/>
+        	<arg value="-keep-as3-metadata+=JsonProperty"/>
+            <arg value="-library-path+=${res.dir}/lib"/>
+            <arg value="-default-size=1024,768"/>
+            <arg value="-default-background-color=0xFFFFFF"/>
+            <arg value="-incremental=true"/>
+            <arg value="-verbose-stacktraces=true"/>
+            <arg value="-headless-server=true"/>
+        </java>
+        <echo>[test] Unit tests compiled successfully</echo>
+        
+        <echo>[test] Running FlexUnit Ant task on ${report.dir}/flash/${test.output}.swf</echo>
+        <flexunit swf="${test.output}" 
+                  toDir="${report.dir}/xml" 
+                  haltonfailure="false" 
+                  verbose="true" 
+                  localTrusted="true" 
+                  failureproperty="flexunit.failed" />
+        
+        <!-- Copy HTML container for FlexUnit UI -->
+        <echo>[test] Generating Flash report container</echo>
+        <copy file="${res.dir}/html/test-runner.html" tofile="${report.dir}/flash/index.html"/>
+        <copy file="${res.dir}/js/swfobject.js" tofile="${report.dir}/flash/swfobject.js"/>
+        
+        <replace file="${report.dir}/flash/index.html">
+            <replacefilter token="@SWF@" value="${test.output}"/>
+        </replace>
+        
+        <!-- Generate readable JUnit-style reports -->
+        <echo>[test] Generating JUnit (HTML) report </echo>
+        <junitreport todir="${report.dir}/xml">
+            <fileset dir="${report.dir}/xml">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <report format="frames" todir="${report.dir}/html"/>
+        </junitreport>
+        
+    	<if>
+            <isset property="flexunit.failed"/>
+            <then>
+                <property name="browser.target" value="file://${report.dir}/html/index.html"/>
+                <antcall target="launch-browser"/>
+                <fail message="Failures exist in unit tests." />
+            </then>
+            <else>
+                <echo>[test] Tests completed with 0 failures or errors</echo>
+            </else>
+        </if>
+    </target>
+    
+	
+	<target name="launch-browser" description="Launches the browser and directs it to the browser.target property">
+        <echo>[launch-browser] Launching browser</echo>
+        <echo>[launch-browser] Directing to: ${browser.target}</echo>
+        <if>
+            <equals arg1="${is.unix}" arg2="true"/>
+            <then>
+                <exec executable="open">
+                    <arg line="-a '${browser.exe}' ${browser.target}"/>
+                </exec>
+            </then>
+            <else>
+                <exec executable="${browser.exe}" spawn="true">
+                    <arg line="'file://${browser.target}'"/>
+                </exec>
+            </else>
+        </if>
+    </target>
+</project>

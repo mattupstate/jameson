@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+			    xmlns:fu="http://www.adobe.com/2009/flexUnitUIRunner"
+			    minWidth="955" minHeight="600"
+			    creationComplete="onCreationComplete()" >
+	<mx:Script>
+		<![CDATA[
+			import net.nobien.jameson.JamesonTestSuite;
+            
+			import org.flexunit.internals.TraceListener;
+			import org.flexunit.listeners.CIListener;
+			import org.flexunit.listeners.UIListener;
+			import org.flexunit.runner.FlexUnitCore;
+			
+            private var core:FlexUnitCore;
+			
+			private function onCreationComplete():void {
+                Out.initialize(this);
+                Out.enableAllLevels();
+				core = new FlexUnitCore();
+				core.addListener(new CIListener());
+				core.addListener(new TraceListener());
+				core.addListener(new UIListener(uiListener));
+				core.run(JamesonTestSuite);
+			}
+			
+		]]>
+	</mx:Script>
+	<fu:TestRunnerBase id="uiListener" width="100%" height="100%"/>
+</mx:Application>
