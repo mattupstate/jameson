@@ -60,6 +60,7 @@
             <arg value="-include-sources=${src.dir}" />
             <arg value="-incremental=true"/>
         	<arg value="-keep-as3-metadata+=JsonProperty"/>
+        	<arg value="-keep-as3-metadata+=JsonConstructor"/>
         	<arg value="-external-library-path+=${res.dir}/lib"/>
             <arg value="-static-link-runtime-shared-libraries=true"/>
             <arg value="-verbose-stacktraces=true"/>
@@ -95,6 +96,7 @@
             <arg value="-source-path=${test.dir}"/>
             <arg value="-source-path=${src.dir}"/>
         	<arg value="-keep-as3-metadata+=JsonProperty"/>
+        	<arg value="-keep-as3-metadata+=JsonConstructor"/>
             <arg value="-library-path+=${res.dir}/lib"/>
             <arg value="-default-size=1024,768"/>
             <arg value="-default-background-color=0xFFFFFF"/>
