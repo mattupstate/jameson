@@ -79,6 +79,13 @@ package net.nobien.jameson {
         public function test_simple_type_with_list_field():void {
             om.readObject(SimpleTypeWithList, '{ "id": 1, "list": [{"id":122, "name": "Simple", "isSomething":true}, {"id":123, "name": "Simple", "isSomething":true}] }');
         }
+        
+        [Test]
+        public function test_read_object_with_vector():void {
+            var json:String = '[{"id":122, "name": "Simple", "isSomething":true}, {"id":123, "name": "Simple", "isSomething":true}]';
+            var list:Vector.<SimpleType> = om.readObject(Vector.<SimpleType> as Class, json)  as Vector.<SimpleType>;
+            Assert.assertEquals(2, list.length);
+        }
     }
     
 }

@@ -77,7 +77,7 @@ package net.nobien.jameson {
             if(classTypeStr.indexOf("__AS3__.vec::Vector") == 0) {
                 var vectorType:Class = getDefinitionByName(classTypeStr) as Class;
                 var vectorInstanceType:Class = getDefinitionByName(classTypeStr.split("<")[1].split(">")[0]) as Class;
-                return new clazz(readList(vectorInstanceType, decodedObject));
+                return clazz(readList(vectorInstanceType, decodedObject));;
             }
             
             var mixinDesc:XML = describeType(mixins[clazz]);
