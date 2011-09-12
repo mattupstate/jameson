@@ -13,6 +13,8 @@ package net.nobien.jameson {
     import net.nobien.jameson.support.SimpleTypeMixin;
     import net.nobien.jameson.support.SimpleTypeWithList;
     import net.nobien.jameson.support.SimpleTypeWithListMixin;
+    import net.nobien.jameson.support.TypeWithDateField;
+    import net.nobien.jameson.support.TypeWithDateFieldMixin;
     
     import org.flexunit.Assert;
 
@@ -28,6 +30,7 @@ package net.nobien.jameson {
             om.registerMixin(SimpleTypeConstructor, SimpleTypeConstructorMixin);
             om.registerMixin(ConstructorAndFieldType, ConstructorAndFieldTypeMixin);
             om.registerMixin(SimpleTypeWithList, SimpleTypeWithListMixin);
+            om.registerMixin(TypeWithDateField, TypeWithDateFieldMixin);
         }
         
         [Test]
@@ -85,6 +88,31 @@ package net.nobien.jameson {
             var json:String = '[{"id":122, "name": "Simple", "isSomething":true}, {"id":123, "name": "Simple", "isSomething":true}]';
             var list:Vector.<SimpleType> = om.readObject(Vector.<SimpleType> as Class, json)  as Vector.<SimpleType>;
             Assert.assertEquals(2, list.length);
+        }
+        
+        [Test]
+        public function test_default_date_parser():void {
+            var json:String = '{ "id": 1, "created": "2012-09-13 08:13:24" }';
+            var instance:TypeWithDateField = om.readObject(TypeWithDateField, json);
+            Assert.assertEquals(2012, instance.created.getFullYear());
+            Assert.assertEquals(9, instance.created.getMonth());
+            Assert.assertEquals(13, instance.created.getDate());
+            Assert.assertEquals(8, instance.created.getHours());
+            Assert.assertEquals(13, instance.created.getMinutes());
+            Assert.assertEquals(24, instance.created.getSeconds());
+        }
+        
+        [Test]
+        public function test_custom_date_parser():void {
+            om.dateParser = function(value:String):Date {
+                var values:Array = value.split("-");
+                return new Date(values[0], values[1], values[2]);
+            }
+            var json:String = '{ "id": 1, "created": "2012-09-13" }';
+            var instance:TypeWithDateField = om.readObject(TypeWithDateField, json);
+            Assert.assertEquals(2012, instance.created.getFullYear());
+            Assert.assertEquals(9, instance.created.getMonth());
+            Assert.assertEquals(13, instance.created.getDate());
         }
     }
     

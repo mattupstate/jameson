@@ -9,9 +9,27 @@ package net.nobien.jameson {
         
         private var jsonConverter:IJsonConverter;
         private var mixins:Dictionary = new Dictionary();
+        public var dateParser:Function;
         
-        public function ObjectMapper(jsonConverter:IJsonConverter) {
+        public function ObjectMapper(jsonConverter:IJsonConverter, dateParser:Function = null) {
             this.jsonConverter = jsonConverter;
+            this.dateParser = dateParser;
+        }
+        
+        private function defaultDateParser(dateStr:String):Date {
+            var split:Array = dateStr.split(" ");
+            var date:Array = split[0].split("-");
+            var time:Array = split[1].split(":");
+            var ssmm:Array = time[2].split(".");
+            
+            var y:String = date[0];
+            var m:String = date[1];
+            var d:String = date[2];
+            var hh:String = time[0];
+            var mm:String = time[1];
+            var ss:String = ssmm[0];
+            
+            return new Date(y, m, d, hh, mm, ss);
         }
         
         private function gatherConstructorValues(paramValues:XMLList, decodedObject:Object):Array {
@@ -53,8 +71,12 @@ package net.nobien.jameson {
                     var jsonPropName:String = meta.arg.@value;
                     var jsonPropValue:* = decodedObject[jsonPropName];
                     var jsonPropType:String = getQualifiedClassName(jsonPropValue);
-                    if(instancePropType.indexOf("Array") > -1) {
+                    if(instancePropType.indexOf("Array") == 0) {
                         throw new Error("Jameson does not support Array fields (yet). Use Vectors to denote object type.");
+                    } else if(instancePropType.indexOf("Date") == 0) {
+                        instance[instancePropName] = (dateParser == null) 
+                            ? defaultDateParser(decodedObject[jsonPropName])
+                            : dateParser(decodedObject[jsonPropName]);
                     } else if(instancePropType != jsonPropType) {
                         instance[instancePropName] = readObject(getDefinitionByName(instancePropType) as Class, jsonPropValue); 
                     } else {
