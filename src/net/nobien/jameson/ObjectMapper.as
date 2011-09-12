@@ -54,11 +54,7 @@ package net.nobien.jameson {
                     var jsonPropValue:* = decodedObject[jsonPropName];
                     var jsonPropType:String = getQualifiedClassName(jsonPropValue);
                     if(instancePropType.indexOf("Array") > -1) {
-                        throw new Error("Jameson does not support Array types. Use Vectors to denote object type.");
-                    } else if(instancePropType.indexOf("__AS3__.vec::Vector") > -1) {
-                        var vectorType:Class = getDefinitionByName(instancePropType) as Class;
-                        var vectorInstanceType:Class = getDefinitionByName(instancePropType.split("<")[1].split(">")[0]) as Class;
-                        instance[instancePropName] = new vectorType(readList(vectorInstanceType, decodedObject[jsonPropName]));
+                        throw new Error("Jameson does not support Array fields (yet). Use Vectors to denote object type.");
                     } else if(instancePropType != jsonPropType) {
                         instance[instancePropName] = readObject(getDefinitionByName(instancePropType) as Class, jsonPropValue); 
                     } else {
@@ -76,6 +72,14 @@ package net.nobien.jameson {
         public function readObject(clazz:Class, json:Object):* {
             var decodedObject:Object = (json is String) ? jsonConverter.parse(json as String) : json;
             var classDesc:XML = describeType(clazz);
+            var classTypeStr:String = classDesc.@name;
+            
+            if(classTypeStr.indexOf("__AS3__.vec::Vector") == 0) {
+                var vectorType:Class = getDefinitionByName(classTypeStr) as Class;
+                var vectorInstanceType:Class = getDefinitionByName(classTypeStr.split("<")[1].split(">")[0]) as Class;
+                return new clazz(readList(vectorInstanceType, decodedObject));
+            }
+            
             var mixinDesc:XML = describeType(mixins[clazz]);
             var instance:* = null;
             try {
