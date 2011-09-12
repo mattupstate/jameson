@@ -1,4 +1,4 @@
-package net.nobien.jameson.support
+package net.nobien.jameson.mapping.support
 {
     public class SimpleTypeWithList
     {

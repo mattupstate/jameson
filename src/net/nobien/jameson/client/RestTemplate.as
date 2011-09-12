@@ -10,7 +10,7 @@ package net.nobien.jameson.client {
     import flash.net.URLRequestMethod;
     import flash.net.URLVariables;
     
-    import net.nobien.jameson.IObjectMapper;
+    import net.nobien.jameson.mapping.IObjectMapper;
     
     import org.flexunit.runner.IRequest;
     

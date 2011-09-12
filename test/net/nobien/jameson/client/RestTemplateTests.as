@@ -2,8 +2,8 @@ package net.nobien.jameson.client {
     
     import flash.events.Event;
     
-    import net.nobien.jameson.AdobeCoreLibJsonConverter;
-    import net.nobien.jameson.ObjectMapper;
+    import net.nobien.jameson.mapping.AdobeCoreLibJsonConverter;
+    import net.nobien.jameson.mapping.ObjectMapper;
     import net.nobien.jameson.client.support.SimpleType;
     import net.nobien.jameson.client.support.SimpleTypeMixin;
     import net.nobien.jameson.client.test.MockLoaderFactory;

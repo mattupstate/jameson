@@ -1,20 +1,20 @@
-package net.nobien.jameson {
+package net.nobien.jameson.mapping {
     
     import flash.utils.describeType;
     import flash.utils.getQualifiedClassName;
     
-    import net.nobien.jameson.support.ComplexType;
-    import net.nobien.jameson.support.ComplexTypeMixin;
-    import net.nobien.jameson.support.ConstructorAndFieldType;
-    import net.nobien.jameson.support.ConstructorAndFieldTypeMixin;
-    import net.nobien.jameson.support.SimpleType;
-    import net.nobien.jameson.support.SimpleTypeConstructor;
-    import net.nobien.jameson.support.SimpleTypeConstructorMixin;
-    import net.nobien.jameson.support.SimpleTypeMixin;
-    import net.nobien.jameson.support.SimpleTypeWithList;
-    import net.nobien.jameson.support.SimpleTypeWithListMixin;
-    import net.nobien.jameson.support.TypeWithDateField;
-    import net.nobien.jameson.support.TypeWithDateFieldMixin;
+    import net.nobien.jameson.mapping.support.ComplexType;
+    import net.nobien.jameson.mapping.support.ComplexTypeMixin;
+    import net.nobien.jameson.mapping.support.ConstructorAndFieldType;
+    import net.nobien.jameson.mapping.support.ConstructorAndFieldTypeMixin;
+    import net.nobien.jameson.mapping.support.SimpleType;
+    import net.nobien.jameson.mapping.support.SimpleTypeConstructor;
+    import net.nobien.jameson.mapping.support.SimpleTypeConstructorMixin;
+    import net.nobien.jameson.mapping.support.SimpleTypeMixin;
+    import net.nobien.jameson.mapping.support.SimpleTypeWithList;
+    import net.nobien.jameson.mapping.support.SimpleTypeWithListMixin;
+    import net.nobien.jameson.mapping.support.TypeWithDateField;
+    import net.nobien.jameson.mapping.support.TypeWithDateFieldMixin;
     
     import org.flexunit.Assert;
 

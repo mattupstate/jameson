@@ -15,8 +15,6 @@
             private var core:FlexUnitCore;
 			
 			private function onCreationComplete():void {
-                Out.initialize(this);
-                Out.enableAllLevels();
 				core = new FlexUnitCore();
 				core.addListener(new CIListener());
 				core.addListener(new TraceListener());

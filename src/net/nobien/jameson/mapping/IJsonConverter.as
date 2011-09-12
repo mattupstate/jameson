@@ -1,4 +1,4 @@
-package net.nobien.jameson {
+package net.nobien.jameson.mapping {
     
     public interface IJsonConverter {
         /**
