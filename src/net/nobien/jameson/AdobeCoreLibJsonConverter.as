@@ -7,11 +7,11 @@ package net.nobien.jameson {
         public function AdobeCoreLibJsonConverter() {
         }
         
-        public function parse(json:String):Object {
+        public function parse(json:String):* {
             return JSON.decode(json);
         }
         
-        public function stringify(obj:Object):String {
+        public function stringify(obj:*):String {
             return JSON.encode(obj);
         }
         

@@ -6,13 +6,13 @@ package net.nobien.jameson {
         * @param json   JSON formatted string
         * @return   Generic ActionScript object
         */
-        function parse(json:String):Object;
+        function parse(json:String):*;
         
         /**
         * Convert an object to JSON string notation.
         * @param value  ActionScript object to conver
         * @return   JSON formatted string
         */
-        function stringify(value:Object):String;
+        function stringify(value:*):String;
     }
 }

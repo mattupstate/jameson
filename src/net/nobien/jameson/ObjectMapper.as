@@ -53,9 +53,13 @@ package net.nobien.jameson {
                     var jsonPropName:String = meta.arg.@value;
                     var jsonPropValue:* = decodedObject[jsonPropName];
                     var jsonPropType:String = getQualifiedClassName(jsonPropValue);
-                    if(instancePropType != jsonPropType) {
-                        Out.warning(this, "instance property '" + instancePropName + ":" + instancePropType + "' does not match json property '" + jsonPropName + ":" + jsonPropType + "'")
-                        Out.status(this, jsonPropType);
+                    if(instancePropType.indexOf("Array") > -1) {
+                        throw new Error("Jameson does not support Array types. Use Vectors to denote object type.");
+                    } else if(instancePropType.indexOf("__AS3__.vec::Vector") > -1) {
+                        var vectorType:Class = getDefinitionByName(instancePropType) as Class;
+                        var vectorInstanceType:Class = getDefinitionByName(instancePropType.split("<")[1].split(">")[0]) as Class;
+                        instance[instancePropName] = new vectorType(readList(vectorInstanceType, decodedObject[jsonPropName]));
+                    } else if(instancePropType != jsonPropType) {
                         instance[instancePropName] = readObject(getDefinitionByName(instancePropType) as Class, jsonPropValue); 
                     } else {
                         instance[instancePropName] = decodedObject[jsonPropName];
@@ -69,7 +73,7 @@ package net.nobien.jameson {
             mixins[clazz] = mixin;
         }
         
-        public function readObject(clazz:Class, json:Object):Object {
+        public function readObject(clazz:Class, json:Object):* {
             var decodedObject:Object = (json is String) ? jsonConverter.parse(json as String) : json;
             var classDesc:XML = describeType(clazz);
             var mixinDesc:XML = describeType(mixins[clazz]);
@@ -82,8 +86,13 @@ package net.nobien.jameson {
             return setInstanceProperties(instance, decodedObject, classDesc, mixinDesc);;
         }
         
-        public function readList(clazz:Class, json:String):Vector.<Object> {
-            return null;
+        public function readList(clazz:Class, json:Object):Array {
+            var decodedList:Array = (json is String) ? jsonConverter.parse(json as String) as Array : json as Array;
+            var list:Array = []
+            for(var i:int = 0; i < decodedList.length; i++) {
+                list.push(readObject(clazz, decodedList[i]));
+            }
+            return list;
         }
         
     }
