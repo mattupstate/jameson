@@ -103,6 +103,7 @@
             <arg value="-incremental=true"/>
             <arg value="-verbose-stacktraces=true"/>
             <arg value="-headless-server=true"/>
+        	<arg value="-debug=true"/>
         </java>
         <echo>[test] Unit tests compiled successfully</echo>
         

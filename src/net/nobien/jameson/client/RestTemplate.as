@@ -19,73 +19,79 @@ package net.nobien.jameson.client {
         public var loaderFactory:ILoaderFactory = new DefaultLoaderFactory();
         public var objectMapper:IObjectMapper;
         
+        private var loader:URLLoader;
+        private var responseType:Class;
+        
         private var _data:*;
         
         public function RestTemplate() {
             
         }
         
-        protected function initEventListeners(loader:URLLoader, clazz:Class):URLLoader {
-            var self:RestTemplate = this;
-            loader.addEventListener(Event.COMPLETE, 
-                function(event:Event):void {
-                    try {
-                        var data:* = URLLoader(event.target).data;
-                        self._data = (objectMapper) 
-                            ? objectMapper.readObject(clazz, data) 
-                            : clazz(data);
-                        self.dispatchEvent(event.clone());
-                    } catch(e:Error) {
-                        self.dispatchEvent(new ErrorEvent(ErrorEvent.ERROR, false, false, e.message))
-                    }
-                }
-            );
-            loader.addEventListener(IOErrorEvent.IO_ERROR,
-                function(event:IOErrorEvent):void {
-                    self.dispatchEvent(event.clone());
-                }
-            );
-            loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR,
-                function(event:IOErrorEvent):void {
-                    self.dispatchEvent(event.clone());
-                }
-            );
-            return loader;
+        protected function onLoadComplete(event:Event):void {
+            killEventListeners();
+            try {
+                var data:* = URLLoader(event.target).data;
+                _data = (objectMapper) 
+                    ? objectMapper.readObject(responseType, data) 
+                    : responseType(data);
+                dispatchEvent(event.clone());
+            } catch(e:Error) {
+                dispatchEvent(new ErrorEvent(ErrorEvent.ERROR, false, false, e.message))
+            }
         }
         
-        protected function createLoader(request:URLRequest, clazz:Class):URLLoader {
+        protected function onLoadError(event:ErrorEvent):void {
+            killEventListeners();
+            dispatchEvent(event.clone());
+        }
+        
+        protected function killEventListeners():void {
+            try {
+                loader.removeEventListener(Event.COMPLETE, onLoadComplete);
+                loader.removeEventListener(IOErrorEvent.IO_ERROR, onLoadError);
+                loader.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, onLoadError);
+            } catch(e:Error) { }
+        }
+        
+        protected function createLoader(request:URLRequest, clazz:Class):void {
             _data = null;
-            return initEventListeners(loaderFactory.getLoader(request), clazz);
+            responseType = clazz;
+            
+            try { 
+                killEventListeners();
+                loader.close();
+            } catch(e:Error) { }
+            
+            loader = loaderFactory.getLoader(request);
+            loader.addEventListener(Event.COMPLETE, onLoadComplete);
+            loader.addEventListener(IOErrorEvent.IO_ERROR, onLoadError);
+            loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onLoadError);
         }
         
-        protected function createRequest(url:String, method:String, params:Object = null):URLRequest {
+        protected function createRequest(url:String, method:String, params:Object):URLRequest {
             var request:URLRequest = new URLRequest(url);
             request.method = method;
-            if(params != null) {
-                var vars:URLVariables = new URLVariables();
-                for(var key:String in params) {
-                    vars[key] = params[key];
-                }
-                request.data = params;
+            var vars:URLVariables = new URLVariables();
+            for(var key:String in params) {
+                vars[key] = params[key];
             }
+            request.data = params;
             return request;
         }
         
-        public function getForObject(url:String, clazz:Class):URLLoader {
-            return createLoader(
-                createRequest(url, URLRequestMethod.GET), clazz 
-            );
+        public function getForObject(url:String, clazz:Class):void {
+            createLoader(createRequest(url, URLRequestMethod.GET, {}), clazz);
         }
         
-        public function postForObject(url:String, params:Object, clazz:Class):URLLoader {
-            return createLoader(
-                createRequest(url, URLRequestMethod.POST, params), clazz
-            );
+        public function postForObject(url:String, params:Object, clazz:Class):void {
+            createLoader(createRequest(url, URLRequestMethod.POST, params), clazz);
         }
         
         public function get data():* {
             return _data;
         }
+        
     }
     
 }

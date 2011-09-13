@@ -6,7 +6,7 @@
 	<mx:Script>
 		<![CDATA[
 			import net.nobien.jameson.JamesonTestSuite;
-            
+			
 			import org.flexunit.internals.TraceListener;
 			import org.flexunit.listeners.CIListener;
 			import org.flexunit.listeners.UIListener;
@@ -15,6 +15,9 @@
             private var core:FlexUnitCore;
 			
 			private function onCreationComplete():void {
+                try {
+                    Out.initialize(this);
+                } catch(e:Error) { }
 				core = new FlexUnitCore();
 				core.addListener(new CIListener());
 				core.addListener(new TraceListener());
