@@ -17,11 +17,11 @@ Jameson takes into account that not everyone can use the latest and greatest 10.
 
 Before you can start mapping JSON to ActionScript objects you'll need an implementation of `IObjectMapper` interface. This is achieved by creating an instance of `net.nobien.jameson.ObjectMapper` and providing it with an instance of an  `IJsonConverter` implementation of your choice. For example:
 
-    import net.nobien.jameson.AdobeCoreLibJsonConverter;
-    import net.nobien.jameson.IObjectMapper;
-    import net.nobien.jameson.ObjectMapper;
+    import net.nobien.jameson.mapping.AdobeCoreLibJsonConverter;
+    import net.nobien.jameson.mapping.IObjectMapper;
+    import net.nobien.jameson.mapping.ObjectMapper;
     
-	var objectMapper:IObjectMapper = new ObjectMapper(new AdobeCoreLibJsonConverter());
+    var objectMapper:IObjectMapper = new ObjectMapper(new AdobeCoreLibJsonConverter());
 
 You're now ready to start mapping and reading objects!
 
