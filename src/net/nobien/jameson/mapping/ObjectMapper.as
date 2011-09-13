@@ -73,14 +73,17 @@ package net.nobien.jameson.mapping {
                     var jsonPropType:String = getQualifiedClassName(jsonPropValue);
                     if(instancePropType.indexOf("Array") == 0) {
                         throw new Error("Jameson does not support Array fields (yet). Use Vectors to denote object type.");
-                    } else if(instancePropType.indexOf("Date") == 0) {
-                        instance[instancePropName] = (dateParser == null) 
-                            ? defaultDateParser(decodedObject[jsonPropName])
-                            : dateParser(decodedObject[jsonPropName]);
-                    } else if(instancePropType != jsonPropType) {
-                        instance[instancePropName] = readObject(getDefinitionByName(instancePropType) as Class, jsonPropValue); 
-                    } else {
-                        instance[instancePropName] = decodedObject[jsonPropName];
+                    } 
+                    if(instance.hasOwnProperty(instancePropName) && jsonPropValue != null) {
+                        if(instancePropType.indexOf("Date") == 0) {
+                            instance[instancePropName] = (dateParser == null) 
+                                ? defaultDateParser(decodedObject[jsonPropName])
+                                : dateParser(decodedObject[jsonPropName]);
+                        } else if(instancePropType != jsonPropType) {
+                            instance[instancePropName] = readObject(getDefinitionByName(instancePropType) as Class, jsonPropValue); 
+                        } else {
+                            instance[instancePropName] = decodedObject[jsonPropName];
+                        }
                     }
                 }
             }
@@ -101,7 +104,6 @@ package net.nobien.jameson.mapping {
                 var vectorInstanceType:Class = getDefinitionByName(classTypeStr.split("<")[1].split(">")[0]) as Class;
                 return clazz(readList(vectorInstanceType, decodedObject));;
             }
-            
             var mixinDesc:XML = describeType(mixins[clazz]);
             var instance:* = null;
             try {

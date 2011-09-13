@@ -37,7 +37,7 @@ package net.nobien.jameson.client {
                     : responseType(data);
                 dispatchEvent(event.clone());
             } catch(e:Error) {
-                dispatchEvent(new ErrorEvent(ErrorEvent.ERROR, false, false, e.message))
+                dispatchEvent(new ErrorEvent(ErrorEvent.ERROR, false, false, e.getStackTrace()))
             }
         }
         

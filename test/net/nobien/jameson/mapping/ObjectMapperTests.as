@@ -114,6 +114,13 @@ package net.nobien.jameson.mapping {
             Assert.assertEquals(9, instance.created.getMonth());
             Assert.assertEquals(13, instance.created.getDate());
         }
+        
+        [Test]
+        public function test_null_value_in_json():void {
+            var json:String = '{"id":122, "name": null, "isSomething":true}';
+            var instance:SimpleType = om.readObject(SimpleType, json);
+            Assert.assertNull(instance.name);
+        }
     }
     
 }
