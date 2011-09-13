@@ -104,14 +104,18 @@ package net.nobien.jameson.mapping {
                 var vectorInstanceType:Class = getDefinitionByName(classTypeStr.split("<")[1].split(">")[0]) as Class;
                 return clazz(readList(vectorInstanceType, decodedObject));;
             }
-            var mixinDesc:XML = describeType(mixins[clazz]);
-            var instance:* = null;
-            try {
-                instance = new clazz();
-            } catch(e:Error) {
-                instance = constructInstance(clazz, decodedObject, classDesc, mixinDesc);
+            
+            if(mixins[clazz]) {
+                var mixinDesc:XML = describeType(mixins[clazz]);
+                var instance:* = null;
+                try {
+                    instance = new clazz();
+                } catch(e:Error) {
+                    instance = constructInstance(clazz, decodedObject, classDesc, mixinDesc);
+                }
+                return setInstanceProperties(instance, decodedObject, classDesc, mixinDesc);
             }
-            return setInstanceProperties(instance, decodedObject, classDesc, mixinDesc);;
+            throw new Error("Could not find mixin for class: " + clazz);
         }
         
         public function readList(clazz:Class, json:Object):Array {
