@@ -1,6 +1,6 @@
 # Jameson
 
-Jameson is an ActionScript 3 JSON document object mapper. It is partly inspired by [Jackson Java JSON Process project](http://jackson.codehaus.org/). 
+Jameson is an ActionScript 3 JSON document object mapper. It is partly inspired by the [Jackson Java JSON Processer project](http://jackson.codehaus.org/). 
 
 One of the annoying things of most JSON to AS3 object mappings, and other types of mappers is that some sort of field is added to the JSON document to denote the object type. It's not so often that you have the luxury of being able to do this, especially if you're consuming a third party API. Jameson is your way around that. 
 
