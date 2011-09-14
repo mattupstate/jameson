@@ -23,7 +23,7 @@ Before you can start mapping JSON to ActionScript objects you'll need an impleme
     
     var objectMapper:IObjectMapper = new ObjectMapper(new AdobeCoreLibJsonConverter());
 
-You're now ready to start mapping and reading objects...so long as what your using keeps the metadata tags.
+You're now ready to start mapping and reading objects...so long as what your compiling with keeps the metadata tags.
 
 ### Flex SDK
 
