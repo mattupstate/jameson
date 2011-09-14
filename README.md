@@ -6,7 +6,7 @@ One of the annoying things of most JSON to AS3 object mappings, and other types 
 
 Bear in mind that this project is essentially a proof of concept and is considered experimental. That said, I am up for hearing anyone's ideas or criticisms regarding the project. 
 
-### Getting Started
+## Getting Started
 
 JSON decoding in ActionScript is currently possible using one of two APIs:
 
@@ -23,7 +23,18 @@ Before you can start mapping JSON to ActionScript objects you'll need an impleme
     
     var objectMapper:IObjectMapper = new ObjectMapper(new AdobeCoreLibJsonConverter());
 
-You're now ready to start mapping and reading objects!
+You're now ready to start mapping and reading objects...so long as what your using keeps the metadata tags.
+
+### Flex SDK
+
+In order to keep the metadata tags in tact when compiling a project that uses Jameson, be sure to tell MXMLC to keep it using the `-keep-as3-metadata` argument:
+
+    -keep-as3-metadata+=JsonConstructor 
+    -keep-as3-metadata+=JsonProperty
+
+### Flash Professional
+
+It was once thought that Flash Professional didn't support ActionScript metadata, but luckily this isn't the case. Simply select "Export SWC" in your publish settings. Doing so will keep all metadata in tact in your SWF.
 
 ## Object Mapping
 
@@ -156,7 +167,7 @@ To read the list, do the following:
       
 Just remember to add `as Class` after the vector reference, otherwise the Flash Player gets cranky.
 
-### Development
+## Development
 
 To compile the swc or run the unit tests, create a file named user.properties and define the path to the Flex SDK and a few other properties. For example:
 
