@@ -9,10 +9,31 @@ package net.nobien.jameson.client {
     import flash.net.URLRequest;
     import flash.net.URLRequestMethod;
     import flash.net.URLVariables;
-    
     import net.nobien.jameson.mapping.IObjectMapper;
     
-    import org.flexunit.runner.IRequest;
+    /**
+     * Dispatched when a loading operation has completed.
+     * @eventType flash.events.Event
+     */
+    [Event(name="complete", type="flash.events.Event")]
+    
+    /**
+     * Dispatched when a mapping operation has experienced an error.
+     * @eventType flash.events.ErrorEvent
+     */
+    [Event(name="error", type="flash.events.ErrorEvent")]
+    
+    /**
+     * Dispatched when a loading operation has experienced an IO error.
+     * @eventType flash.events.IOErrorEvent
+     */
+    [Event(name="ioError", type="flash.events.IOErrorEvent")]
+    
+    /**
+     * Dispatched when a loading operation has experienced a security error.
+     * @eventType flash.events.SecurityErrorEvent
+     */
+    [Event(name="securityError", type="flash.events.SecurityErrorEvent")]
     
     public class RestTemplate extends EventDispatcher {
         
