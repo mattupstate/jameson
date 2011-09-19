@@ -9,7 +9,7 @@ package net.nobien.jameson.client {
         }
         
         public function getLoader(request:URLRequest = null):URLLoader {
-            return new URLLoader();
+            return new URLLoader(request);
         }
         
     }
